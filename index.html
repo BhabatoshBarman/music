@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07070a">
+  <meta name="description" content="PulseDeck is a mobile-first offline PWA music player.">
+  <title>PulseDeck Music Player</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="dark">
+  <div id="splash" class="splash">
+    <div class="splash-logo">PD</div>
+    <h1>PulseDeck</h1>
+    <p>Offline music player</p>
+  </div>
+
+  <main class="phone-app">
+    <header class="app-header">
+      <div>
+        <span class="kicker">PulseDeck</span>
+        <h1 id="screenTitle">Home</h1>
+      </div>
+      <div class="header-actions">
+        <button id="fullscreenBtn" class="round-btn" type="button" aria-label="Fullscreen">FS</button>
+        <button id="installBtn" class="round-btn install" type="button" aria-label="Install app" hidden>IN</button>
+      </div>
+    </header>
+
+    <section id="home" class="screen active" data-title="Home">
+      <div class="hero-card">
+        <div class="machine-top" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <canvas id="visualizer" width="640" height="640" aria-label="Audio visualizer"></canvas>
+        <div class="album-orb">
+          <i class="glass-ring"></i>
+          <span id="orbLetters">PD</span>
+        </div>
+        <div class="side-leds" aria-hidden="true">
+          <b></b><b></b><b></b><b></b>
+        </div>
+        <div class="hero-copy">
+          <span id="nowBadge">Ready</span>
+          <h2 id="trackTitle">No track loaded</h2>
+          <p id="trackMeta">Import audio files to start your offline library.</p>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="console-strip" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="time-row">
+          <span id="currentTime">0:00</span>
+          <span id="duration">0:00</span>
+        </div>
+        <input id="seek" class="seek" type="range" min="0" max="1000" value="0" aria-label="Seek position">
+        <div class="transport">
+          <button id="shuffleBtn" class="pill-btn" type="button">Shuffle</button>
+          <button id="prevBtn" class="icon-btn" type="button" aria-label="Previous">Prev</button>
+          <button id="playBtn" class="play-btn" type="button" aria-label="Play">Play</button>
+          <button id="nextBtn" class="icon-btn" type="button" aria-label="Next">Next</button>
+          <button id="repeatBtn" class="pill-btn" type="button">Repeat Off</button>
+        </div>
+        <div class="machine-controls" aria-hidden="true">
+          <span class="dial"></span>
+          <span class="status-light"></span>
+          <span class="dial small"></span>
+        </div>
+      </div>
+
+      <div class="quick-grid">
+        <button class="quick-card" type="button" data-go="library">
+          <strong id="trackCount">0</strong>
+          <span>Tracks</span>
+        </button>
+        <button class="quick-card" type="button" data-go="playlists">
+          <strong id="likedCount">0</strong>
+          <span>Liked</span>
+        </button>
+        <button class="quick-card" type="button" data-go="equalizer">
+          <strong id="presetName">Normal</strong>
+          <span>EQ preset</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="library" class="screen" data-title="Library">
+      <div class="search-row">
+        <input id="search" type="search" placeholder="Search songs, artist, album" aria-label="Search music">
+        <label class="import-btn">
+          <input id="fileInput" type="file" accept="audio/*" multiple>
+          Import
+        </label>
+      </div>
+      <div class="tabs">
+        <button class="chip active" type="button" data-filter="all">All</button>
+        <button class="chip" type="button" data-filter="recent">Recent</button>
+        <button class="chip" type="button" data-filter="played">Most played</button>
+        <button class="chip" type="button" data-filter="liked">Liked</button>
+      </div>
+      <div id="trackList" class="list"></div>
+    </section>
+
+    <section id="playlists" class="screen" data-title="Playlists">
+      <div class="composer">
+        <input id="playlistName" type="text" placeholder="New playlist name" aria-label="New playlist name">
+        <button id="createPlaylistBtn" class="solid-btn" type="button">Create</button>
+      </div>
+      <div id="playlistList" class="list"></div>
+      <h2 class="section-title">Queue</h2>
+      <div id="queueList" class="list compact"></div>
+    </section>
+
+    <section id="equalizer" class="screen" data-title="Equalizer">
+      <div class="control-card">
+        <label>Preset
+          <select id="presetSelect">
+            <option>Normal</option>
+            <option>Rock</option>
+            <option>Pop</option>
+            <option>Jazz</option>
+            <option>Classical</option>
+            <option>Dance</option>
+            <option>Bass Boost</option>
+            <option>Vocal Boost</option>
+            <option>Acoustic</option>
+          </select>
+        </label>
+        <div id="eqBands" class="eq-bands"></div>
+      </div>
+      <div class="control-card grid-controls">
+        <label>Volume <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8"></label>
+        <label>Speed <input id="speed" type="range" min="0.5" max="2" step="0.05" value="1"></label>
+        <label>Balance <input id="balance" type="range" min="-1" max="1" step="0.05" value="0"></label>
+        <label>Crossfade <input id="crossfade" type="range" min="0" max="10" step="1" value="0"></label>
+        <label>Bass <input id="bassBoost" type="range" min="0" max="12" step="1" value="0"></label>
+        <label>Treble <input id="trebleBoost" type="range" min="0" max="12" step="1" value="0"></label>
+      </div>
+    </section>
+
+    <section id="karaoke" class="screen" data-title="Karaoke">
+      <div class="lyrics-stage">
+        <div id="lyricsDisplay">Upload a .lrc or .txt lyrics file.</div>
+      </div>
+      <div class="control-card grid-controls">
+        <label class="import-btn wide">
+          <input id="lyricsInput" type="file" accept=".lrc,.txt">
+          Upload lyrics
+        </label>
+        <label>Vocal reduce <input id="vocalReduce" type="range" min="0" max="1" step="0.05" value="0"></label>
+        <label>Echo <input id="echo" type="range" min="0" max="1" step="0.05" value="0"></label>
+        <label>Pitch <input id="pitch" type="range" min="-6" max="6" step="1" value="0"></label>
+      </div>
+      <div class="score-card">
+        <span>Karaoke score</span>
+        <strong id="karaokeScore">0</strong>
+      </div>
+    </section>
+
+    <section id="settings" class="screen" data-title="Settings">
+      <div class="control-card grid-controls">
+        <label>Theme
+          <select id="themeSelect">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="amoled">AMOLED Black</option>
+            <option value="blue">Neon Blue</option>
+            <option value="purple">Purple</option>
+            <option value="green">Green</option>
+            <option value="red">Red</option>
+          </select>
+        </label>
+        <label>Accent <input id="accentPicker" type="color" value="#ff3d81"></label>
+        <label>Blur <input id="blurRange" type="range" min="0" max="28" value="18"></label>
+        <label>Corners <input id="cornerRange" type="range" min="6" max="28" value="22"></label>
+        <label>Sleep timer
+          <select id="sleepTimer">
+            <option value="0">Off</option>
+            <option value="5">5 min</option>
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="60">60 min</option>
+          </select>
+        </label>
+        <button id="muteBtn" class="solid-btn" type="button">Mute</button>
+        <button id="exportBtn" class="ghost-btn" type="button">Export playlists</button>
+        <label class="import-btn wide">
+          <input id="importPlaylistInput" type="file" accept="application/json">
+          Import playlists
+        </label>
+      </div>
+      <p class="hint">Audio files are stored locally in this browser with IndexedDB. Nothing is uploaded.</p>
+    </section>
+  </main>
+
+  <aside id="miniPlayer" class="mini-player" hidden>
+    <button id="miniOpen" type="button">
+      <strong id="miniTitle">No track</strong>
+      <span id="miniMeta">Tap to open</span>
+    </button>
+    <button id="miniPlay" class="round-btn" type="button">Play</button>
+  </aside>
+
+  <nav class="bottom-nav" aria-label="App navigation">
+    <button class="nav-btn active" type="button" data-screen="home">Home</button>
+    <button class="nav-btn" type="button" data-screen="library">Library</button>
+    <button class="nav-btn" type="button" data-screen="playlists">Lists</button>
+    <button class="nav-btn" type="button" data-screen="equalizer">EQ</button>
+    <button class="nav-btn" type="button" data-screen="karaoke">Karaoke</button>
+    <button class="nav-btn" type="button" data-screen="settings">Settings</button>
+  </nav>
+
+  <audio id="audio" preload="metadata"></audio>
+  <script src="app.js"></script>
+</body>
+</html>
