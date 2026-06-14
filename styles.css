@@ -32,6 +32,7 @@ body[data-theme="red"] { --accent: #ef4444; --accent-2: #fb923c; }
 * { box-sizing: border-box; }
 
 html { height: 100%; }
+html, body { width: 100%; max-width: 100%; }
 
 body {
   min-height: 100%;
@@ -109,6 +110,7 @@ button { cursor: pointer; color: inherit; }
   margin: 0 auto;
   padding: max(18px, env(safe-area-inset-top)) 16px 112px;
   transform-style: preserve-3d;
+  overflow-x: clip;
 }
 
 .app-header {
@@ -168,6 +170,7 @@ h2 { margin-bottom: 8px; font-size: 24px; line-height: 1.05; letter-spacing: 0; 
 .screen {
   display: none;
   animation: lift 220ms ease;
+  min-width: 0;
 }
 
 .screen.active { display: grid; gap: 16px; }
@@ -190,6 +193,7 @@ h2 { margin-bottom: 8px; font-size: 24px; line-height: 1.05; letter-spacing: 0; 
   position: relative;
   overflow: hidden;
   min-height: 490px;
+  max-width: 100%;
   padding: 24px 18px 18px;
   transform: rotateX(2deg);
   transform-style: preserve-3d;
@@ -408,7 +412,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .transport {
   display: grid;
-  grid-template-columns: 1fr 56px 76px 56px 1fr;
+  grid-template-columns: minmax(0, 1fr) 56px 76px 56px minmax(0, 1fr);
   gap: 8px;
   align-items: center;
 }
@@ -422,6 +426,9 @@ input[type="range"]::-webkit-slider-thumb {
 .pill-btn {
   font-size: 11px;
   color: var(--muted);
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .pill-btn.active, .chip.active {
@@ -474,7 +481,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .quick-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -495,7 +502,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 .search-row, .composer {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
 }
 
@@ -552,6 +559,7 @@ input, select {
   gap: 12px;
   align-items: center;
   padding: 10px;
+  min-width: 0;
 }
 
 .track-item.active { outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent); }
@@ -585,6 +593,7 @@ input, select {
 .row-actions {
   display: flex;
   gap: 6px;
+  min-width: 0;
 }
 
 .tiny-btn {
@@ -704,7 +713,7 @@ input, select {
   right: 0;
   bottom: 0;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 4px;
   width: min(720px, 100%);
   margin: 0 auto;
@@ -723,6 +732,8 @@ input, select {
   color: var(--muted);
   font-size: 11px;
   font-weight: 850;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .nav-btn.active {
@@ -762,7 +773,108 @@ input, select {
 @media (max-width: 390px) {
   .phone-app { padding-left: 10px; padding-right: 10px; }
   .transport { grid-template-columns: 1fr 46px 68px 46px 1fr; }
+  .play-btn { width: 68px; }
   .pill-btn { font-size: 10px; padding: 0 6px; }
   .bottom-nav { gap: 2px; padding-left: 4px; padding-right: 4px; }
   .nav-btn { font-size: 10px; }
+}
+
+@media (max-width: 520px) {
+  .hero-card {
+    min-height: clamp(390px, 118vw, 470px);
+    padding-left: 14px;
+    padding-right: 14px;
+    transform: none;
+  }
+
+  .album-orb {
+    width: min(68vw, 260px);
+    margin-top: 18px;
+  }
+
+  .side-leds {
+    top: 92px;
+    right: 12px;
+    gap: 8px;
+  }
+
+  .side-leds b {
+    width: 9px;
+    height: 30px;
+  }
+
+  .hero-copy {
+    left: 14px;
+    right: 14px;
+  }
+
+  .track-item, .playlist-item {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .track-item .row-actions, .playlist-item .row-actions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  .track-item .tiny-btn, .playlist-item .tiny-btn {
+    flex: 1 1 0;
+  }
+
+  .search-row, .composer {
+    grid-template-columns: 1fr;
+  }
+
+  .import-btn, .solid-btn, .ghost-btn {
+    width: 100%;
+  }
+
+  .lyrics-stage {
+    min-height: 300px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .phone-app {
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 128px;
+  }
+
+  h1 { font-size: 26px; }
+  h2 { font-size: 21px; }
+
+  .round-btn {
+    width: 40px;
+    font-size: 11px;
+  }
+
+  .transport {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .play-btn {
+    width: 100%;
+    min-height: 58px;
+    aspect-ratio: auto;
+    grid-column: 1 / -1;
+    order: -1;
+  }
+
+  .icon-btn, .pill-btn {
+    min-height: 44px;
+  }
+
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nav-btn {
+    min-height: 42px;
+  }
 }
